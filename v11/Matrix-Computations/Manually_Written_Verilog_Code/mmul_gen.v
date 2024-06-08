@@ -158,10 +158,10 @@ module mmul_gen(
       i <= 0;
       j <= 0;
       k <= 0;
-		stopijk<=0;
-		stopijk1<=0;
-		stopijk2<=0;
-		end
+      stopijk<=0;
+      stopijk1<=0;
+      stopijk2<=0;
+    end
     else if (state == 2 && (!stopijk)) begin
       j <= j+1;
       if(j == (order-1)) begin
@@ -174,81 +174,76 @@ module mmul_gen(
             k <= 0;
             i <= 0;
             j <= 0;
-		      stopijk <= 1;
+	    stopijk <= 1;
           end
-		  end
-		end
+	end
+      end
     end
-	 	stopijk1 <= stopijk;
-		stopijk2 <= stopijk1;
+    stopijk1 <= stopijk;
+    stopijk2 <= stopijk1;
   end
   
   always @ (*)
     begin
 	 if (RST) begin
 	    fA_read_enable_wire <= 0;
-		 fB_read_enable_wire <= 0;
-		 A_write_enable_wire <= 0;
-		 B_write_enable_wire <= 0;
-		 C_write_enable_wire <= 0;
-		 A_read_addr_valid_wire <= 0;
-		 B_read_addr_valid_wire <= 0;
-		 C_read_addr_valid_wire <= 0;
-		 fC_write_enable_wire <= 0;
-	 end
-		 
-	   if(state==1) begin
-		  if (p < ((order**2)-1) && p >= 0) begin
+	    fB_read_enable_wire <= 0;
+	    A_write_enable_wire <= 0;
+	    B_write_enable_wire <= 0;
+	    C_write_enable_wire <= 0;
+	    A_read_addr_valid_wire <= 0;
+            B_read_addr_valid_wire <= 0;
+	    C_read_addr_valid_wire <= 0;
+	    fC_write_enable_wire <= 0;
+	 end 
+	 if(state==1) begin
+	  if (p < ((order**2)-1) && p >= 0) begin
            if ((fA_read_ready_wire == 1'd1) && (fB_read_ready_wire == 1'd1)) begin
              fA_read_enable_wire <= 1'd1;
              A_write_enable_wire <= 1'd1;
-				 
-				 fB_read_enable_wire <= 1'd1;
+	     fB_read_enable_wire <= 1'd1;
              B_write_enable_wire <= 1'd1;
-				 
-				 C_write_enable_wire <= 1'd1;
-			   end
-			end
-		end
-		
-		if(state==2) begin
-		  if(stopijk2!=1) begin
-		    C_write_enable_wire <= 1'd1;
-			 A_read_addr_valid_wire <= 1'd1;
-			 B_read_addr_valid_wire <= 1'd1;
-			 C_read_addr_valid_wire <= 1'd1;
-		  end
-		end
-		
-		if(state == 3) begin
-		  if (mm < (order**2)) begin
-			 if ((1'd1 == fC_write_ready_wire)) begin
-		      C_read_addr_valid_wire <= 1'd1;
-				fC_write_enable_wire <= 1'd1;
-		    end
-		  end
-		 end
-	end
+	     C_write_enable_wire <= 1'd1;
+	   end
+	  end
+	 end
+	 if(state==2) begin
+	  if(stopijk2!=1) begin
+	   C_write_enable_wire <= 1'd1;
+	   A_read_addr_valid_wire <= 1'd1;
+	   B_read_addr_valid_wire <= 1'd1;
+	   C_read_addr_valid_wire <= 1'd1;
+	  end
+	 end
+	 if(state == 3) begin
+	  if (mm < (order**2)) begin
+	   if ((1'd1 == fC_write_ready_wire)) begin
+	    C_read_addr_valid_wire <= 1'd1;
+	    fC_write_enable_wire <= 1'd1;
+	   end
+	  end
+	 end
+    end
   
   always @ (posedge CLK) begin
     if (RST) begin
       state <= 0;
       Done <= 0;
-		p <= 0;
-		mm <= 0;
-		temp_addr <= 0;
-		fC_write_data_wire <= 0;
-		A_read_addr_wire <= 0;
+      p <= 0;
+      mm <= 0;
+      temp_addr <= 0;
+      fC_write_data_wire <= 0;
+      A_read_addr_wire <= 0;
       A_write_addr_wire <= 0;
       A_write_data_wire <= 0;
-		B_read_addr_wire <= 0;
+      B_read_addr_wire <= 0;
       B_write_addr_wire <= 0;
       B_write_data_wire <= 0;
-		C_read_addr_wire <= 0;
+      C_read_addr_wire <= 0;
       C_write_addr_wire <= 0;
       C_write_data_wire <= 0;
     end 
-	 else begin
+    else begin
       case(state)
         0: begin // IDLE
           if (START) begin
@@ -266,49 +261,49 @@ module mmul_gen(
             C_write_data_wire <= 32'd0;
             p <= (p + 1);
            end
-			  else begin
-			   state <= 1;
-			  end
-			 end
-			 else begin
-			  state <= 2;
-			 end
-			end
+	   else begin
+	    state <= 1;
+	    end
+	   end
+	   else begin
+	    state <= 2;
+	   end
+	  end
         2: begin // Compute
-		     if(stopijk2 == 1) begin
-			  state <= 3;
-			  end
-			  else begin
-			   if (!stopijk &&(i==0 && j==0 && k==0) )begin 
-	           A_read_addr_wire <= (i * order) + k;
-              B_read_addr_wire <= (k * order) + j;
-              C_read_addr_wire <= (i * order) + j;
-			     temp_addr <= C_read_addr_wire;
-             end
-				else begin
-		      A_read_addr_wire <= (i * order) + k;
-            B_read_addr_wire <= (k * order) + j;
-            C_read_addr_wire <= (i * order) + j;
-				temp_addr <= C_read_addr_wire;
-				C_write_data_wire <= (A_read_data_wire*B_read_data_wire) + C_read_data_wire;
-			   C_write_addr_wire <= temp_addr;
-			 end
-			end	
+	 if(stopijk2 == 1) begin
+	  state <= 3;
+	 end
+	 else begin
+	  if (!stopijk &&(i==0 && j==0 && k==0) )begin 
+	   A_read_addr_wire <= (i * order) + k;
+           B_read_addr_wire <= (k * order) + j;
+           C_read_addr_wire <= (i * order) + j;
+	   temp_addr <= C_read_addr_wire;
+          end
+	  else begin
+	  A_read_addr_wire <= (i * order) + k;
+          B_read_addr_wire <= (k * order) + j;
+          C_read_addr_wire <= (i * order) + j;
+	  temp_addr <= C_read_addr_wire;
+	  C_write_data_wire <= (A_read_data_wire*B_read_data_wire) + C_read_data_wire;
+	  C_write_addr_wire <= temp_addr;
+	  end
+	 end	
         end
         3: begin // UPDATE in FIFO C
-		      if (mm < ((order**2)+2)) begin
-				 if ((1'd1 == fC_write_ready_wire)) begin
-				  C_read_addr_wire <= (mm);
-				  fC_write_data_wire <= C_read_data_wire;
-				  mm <= mm + 1;
-				 end
-				end
-				 else begin
-				 state <= 0;
-				 Done <= 1;
-				 end
-        	  end
-			default : state <= 0;
+	 if (mm < ((order**2)+2)) begin
+	  if ((1'd1 == fC_write_ready_wire)) begin
+	   C_read_addr_wire <= (mm);
+	   fC_write_data_wire <= C_read_data_wire;
+	   mm <= mm + 1;
+	  end
+	 end
+	 else begin
+	  state <= 0;
+	  Done <= 1;
+	 end
+        end
+        default : state <= 0;
       endcase
     end
   end
