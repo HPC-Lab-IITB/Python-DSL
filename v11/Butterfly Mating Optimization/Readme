@@ -20,4 +20,5 @@ This repository contains
 		|_ _BMO.c (functionality implementation)
 		|
 		|_ _tb.c (testbench)
+3) summary.png shows the utilization and timing summary of the above models
 
