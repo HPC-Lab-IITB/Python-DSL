@@ -1,0 +1,23 @@
+This repository contains 
+
+1) Python-DSL implementations of Butterfly Mating Optimization(BMO) Algorithm
+  		|
+  		|_ _ _ Predefined Python-DSL implementation (BMO_python_DSL.py)
+  		|				|
+  		|				|_ _ FIFO based inputs and outputs
+  		|
+  		|
+  		|_ _ _ AXI supported Python-DSL implementation (BMO_AXI_model.py)
+  		|				|
+  		|				|_ _ Reg based inputs and outputs
+  		|
+  		|_ _ _ AXI supported static elaboration model Python-DSL implementation (BMO_AXI_static elaboration_model.py)
+  						|
+  						|_ _ For-Loop inside Leaf-Section
+  		
+2) Vivado-HLS implementation of Butterfly Mating Optimization(BMO) Algorithm
+		|
+		|_ _BMO.c (functionality implementation)
+		|
+		|_ _tb.c (testbench)
+
