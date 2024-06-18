@@ -1,3 +1,7 @@
+"""
+@author: dhruva
+"""
+
 from symbolic import *
 
 THETA_REORDER = [[4, 0, 1, 2, 3], [1, 2, 3, 4, 0]]
